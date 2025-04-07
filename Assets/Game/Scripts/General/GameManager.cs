@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private LevelManager _levelManager;
     [SerializeField] private Player _player;
+    [SerializeField] private PlayerController _playerController;
 
     private Coroutine _speedUpCoroutine;
     private float _speedChangeTime = 10;
@@ -60,5 +61,6 @@ public class GameManager : MonoBehaviour
     private void AddGameSpeed()
     {
         _levelManager.UpdateSpeed(_gameSpeed);
+        _playerController.UpdateSpeed(_gameSpeed);
     }
 }

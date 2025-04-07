@@ -9,9 +9,10 @@ public class LevelManager : MonoBehaviour
 
     [SerializeField] private List<LevelPart> _levelParts;
     [SerializeField] private GameObject _levelBack;
-    
+    [SerializeField] private Transform _levelParent;
+    [SerializeField] private Transform _buildPoint;
+
     private List<LevelPart> _currentParts;
-    private Transform _buildPoint;
     private System.Random _random;
     private bool _levelMoving = true;
     private int _prevIndex = 0;
@@ -48,9 +49,11 @@ public class LevelManager : MonoBehaviour
         int levelIndex = _random.Next(0, _levelParts.Count + 1);
         while (_prevIndex == levelIndex)
             levelIndex = _random.Next(0, _levelParts.Count + 1);
-        Instantiate(_levelParts[levelIndex].gameObject, _buildPoint);
-        _currentParts.Add(_levelParts[levelIndex]);
         _buildPoint.position += new Vector3(_levelParts[levelIndex].length, 0, 0);
+        GameObject levelPart = Instantiate(_levelParts[levelIndex].gameObject, _levelParent);
+        levelPart.transform.position = _buildPoint.position;
+        _currentParts.Add(_levelParts[levelIndex]);
+        
     }
 
     private void EnableMoving()
