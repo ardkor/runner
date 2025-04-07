@@ -32,5 +32,7 @@ public class JsonSerializer
         {
             Debug.LogWarning("Файл JSON не найден!");
         }
+
+        return records;
     }
 }

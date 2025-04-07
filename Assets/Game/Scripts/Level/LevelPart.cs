@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LevelPart : MonoBehaviour
 {
-    public float length { get; private set; }
+    [SerializeField] private float _length;
+    public float length => _length;
 
 }

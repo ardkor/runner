@@ -16,7 +16,7 @@ public class LevelManager : MonoBehaviour
     private bool _levelMoving = true;
     private int _prevIndex = 0;
     private float _levelSpeed = 3;
-    private float _speedMultiplier;
+    private float _speedMultiplier = 1;
 
     private void OnEnable()
     {
@@ -77,8 +77,8 @@ public class LevelManager : MonoBehaviour
     {
         foreach (var part in _currentParts)
         {
-            part.transform.Translate(part.transform.position + new Vector3(_levelSpeed * _speedMultiplier, 0, 0));
+            part.transform.Translate(part.transform.position + new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
         }
-        _levelBack.transform.Translate(_levelBack.transform.position + new Vector3(_levelSpeed * _speedMultiplier, 0, 0));
+        _levelBack.transform.Translate(_levelBack.transform.position + new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
     }
 }

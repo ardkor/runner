@@ -40,8 +40,12 @@ public class EndGameMenu : MonoBehaviour
 
     private void SaveScore()
     {
-        Record record = new Record(_input.text, _coinCounter.Coins);
-        JsonUtility.ToJson(record);
+        JsonSerializer jsonSerializer = new JsonSerializer();
+        List<Record> records = jsonSerializer.LoadJson();
+        records.Add(new Record(_input.text, _coinCounter.Coins));
+        RecordsData recordsData = new RecordsData();
+        recordsData.records = records.ToArray();
+        jsonSerializer.SaveJson(recordsData);
     }
 
     private void Close()

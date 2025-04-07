@@ -7,8 +7,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public event Action died;
-    public event Action<int> coinRaised;
 
+    [SerializeField] private BonucesManager _bonucesManager;
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private CoinCounter _coinCounter;
 
@@ -21,13 +21,23 @@ public class Player : MonoBehaviour
         }
         else if (other.GetComponent<Coin>())
         {
+            if(_bonucesManager.DoubleCoinsEnabled)
+                _coinCounter.AddCoin();
             _coinCounter.AddCoin();
         }
         else if (other.GetComponent<Obstacle>())
         {
-            Die();
+            if(!_bonucesManager.InvincibilityEnabled)
+                Die();
         }
-        
+        else if (other.GetComponent<DoubleCoins>())
+        {
+            _bonucesManager.GetDoubleCoinsBonuce();
+        }
+        else if (other.GetComponent<Invincibility>())
+        {
+            _bonucesManager.GetInvincibilityBonuce();
+        }
     }
     
 
