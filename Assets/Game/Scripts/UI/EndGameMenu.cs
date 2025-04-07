@@ -6,45 +6,48 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 
-namespace Game.Scripts.UI
+
+public class EndGameMenu : MonoBehaviour
 {
-    public class EndGameMenu
+    [SerializeField] private MainMenu _mainMenu;
+
+    [SerializeField] private Player _player;
+    [SerializeField] private CoinCounter _coinCounter;
+
+    [SerializeField] private Button _saveScoreButton;
+    [SerializeField] private Button _closeButton;
+    [SerializeField] private TMP_Text _score;
+    [SerializeField] private InputField _input;
+
+    private void OnEnable()
     {
-        [SerializeField] private UIManager _uiManager;
-        [SerializeField] private Player _player;
-        [SerializeField] private CoinCounter _coinCounter;
-        
-        [SerializeField] private Button _saveScoreButton;
-        [SerializeField] private Button _closeButton;
-        [SerializeField] private TMP_Text _score;
-        [SerializeField] private InputField _input;
+        _saveScoreButton.onClick.AddListener(SaveScore);
+        _closeButton.onClick.AddListener(Close);
+        _player.died += SetScore;
+    }
 
-        private void OnEnable()
-        {
-            _saveScoreButton.onClick.AddListener(SaveScore);
-            _closeButton.onClick.AddListener(Close);
-            _player.died += SetScore;
-        }
+    private void OnDisable()
+    {
+        _saveScoreButton.onClick.RemoveListener(SaveScore);
+        _closeButton.onClick.RemoveListener(Close);
+        _player.died -= SetScore;
+    }
 
-        private void OnDisable()
-        {
-            _saveScoreButton.onClick.RemoveListener(SaveScore);
-            _closeButton.onClick.RemoveListener(Close);
-            _player.died -= SetScore;
-        }
-        private void SetScore()
-        {
-            _score.text = _coinCounter.Coins.ToString();
-        }
-        private void SaveScore()
-        {
-            
-        }
-        
-        private void Close()
-        {
-            _uiManager.CloseEndGameMenu();
-            _uiManager.OpenMainMenu();
-        }
+    private void SetScore()
+    {
+        _score.text = _coinCounter.Coins.ToString();
+    }
+
+    private void SaveScore()
+    {
+        Record record = new Record(_input.text, _coinCounter.Coins);
+        JsonUtility.ToJson(record);
+    }
+
+    private void Close()
+    {
+        _coinCounter.Close();
+        _mainMenu.Open();
+        gameObject.SetActive(false);
     }
 }

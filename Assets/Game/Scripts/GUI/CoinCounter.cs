@@ -6,6 +6,8 @@ using UnityEngine;
 
 public class CoinCounter : MonoBehaviour
 {
+    [SerializeField] private GameManager _gameManager;
+
     [SerializeField] private Player _player;
     
     [SerializeField] private TMP_Text _score;
@@ -15,11 +17,17 @@ public class CoinCounter : MonoBehaviour
     public int Coins => _coins;
     private void OnEnable()
     {
-        _player.coinRaised += UpdateScore;
+        _gameManager.gameStarted += ResetCoins;
     }
+
     private void OnDisable()
     {
-        _player.coinRaised -= UpdateScore;
+        _gameManager.gameStarted -= ResetCoins;
+    }
+
+    private void ResetCoins()
+    {
+        _coins = 0;
     }
 
     public void Open()
@@ -30,9 +38,14 @@ public class CoinCounter : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-    private void UpdateScore(int coins)
+
+    public void AddCoin()
     {
-        _coins = coins;
+        _coins += 1;
+        UpdateScore();
+    }
+    private void UpdateScore()
+    {
         _score.text = _coins.ToString();
     }
 }
