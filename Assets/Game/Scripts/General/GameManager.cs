@@ -14,17 +14,17 @@ public class GameManager : MonoBehaviour
 
     private Coroutine _speedUpCoroutine;
     private float _speedChangeTime = 10;
-    private float _speedChange = 0.2f;
+    private float _speedChange = 0.5f;
     private float _gameSpeed = 1;
 
     private void OnEnable()
     {
-        _player.died += EndGame;
+        _player.died += StopAccelerating;
     }
 
     private void OnDisable()
     {
-        _player.died -= EndGame;
+        _player.died -= StopAccelerating;
     }
     
     public void StartGame()
@@ -38,12 +38,7 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void BuildPart()
-    {
-        _levelManager.BuildLevelPart();
-    }
-
-    private void EndGame()
+    private void StopAccelerating()
     {
         StopCoroutine(_speedUpCoroutine);
     }
@@ -52,9 +47,9 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
+            yield return new WaitForSeconds(_speedChangeTime);
             _gameSpeed += _speedChange;
             AddGameSpeed();
-            yield return new WaitForSeconds(_speedChangeTime);
         }
     }
 

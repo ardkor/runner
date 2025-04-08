@@ -17,7 +17,7 @@ public class EndGameMenu : MonoBehaviour
     [SerializeField] private Button _saveScoreButton;
     [SerializeField] private Button _closeButton;
     [SerializeField] private TMP_Text _score;
-    [SerializeField] private InputField _input;
+    [SerializeField] private TMP_InputField _input;
 
     private void OnEnable()
     {

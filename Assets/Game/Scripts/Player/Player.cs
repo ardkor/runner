@@ -3,23 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Player : MonoBehaviour
 {
     public event Action died;
 
     [SerializeField] private BonucesManager _bonucesManager;
-    [SerializeField] private GameManager _gameManager;
+    [SerializeField] private LevelManager _levelManager;
     [SerializeField] private CoinCounter _coinCounter;
 
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<LevelPart>())
-        {
-            _gameManager.BuildPart();
-        }
-        else if (other.GetComponent<Coin>())
+        if (other.GetComponent<Coin>())
         {
             if(_bonucesManager.DoubleCoinsEnabled)
                 _coinCounter.AddCoin();
@@ -37,6 +34,10 @@ public class Player : MonoBehaviour
         else if (other.GetComponent<Invincibility>())
         {
             _bonucesManager.GetInvincibilityBonuce();
+        }
+        else if (other.GetComponent<LevelPartTrigger>())
+        {
+            _levelManager.PassPart();
         }
     }
     

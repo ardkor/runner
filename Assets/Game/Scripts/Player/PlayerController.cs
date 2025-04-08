@@ -12,17 +12,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Player _player;
     [SerializeField] private float _firstRawX;
     [SerializeField] private float _spaceBetweenRaws;
+
+    [SerializeField] private float _sideSpeed = 3;
     
     private Animator _animator;
 
     private Vector3 _currentDirection;
 
-    private float _sideSpeed = 3;
-    private float _speedMultiplier;
+    private float _speedMultiplier = 1;
 
     private int _rawsCount = 3;
     private int _currentRaw = 2;
-    private float tolerance = 0.04f;
+    private float tolerance = 0.3f;
 
     private bool _movingSide;
     private bool _active;
@@ -61,13 +62,13 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.A) && _currentRaw != 1)
             {
                 _currentRaw -= 1;
-                _currentDirection = Vector3.left;
+                _currentDirection = Vector3.right;
                 _movingSide = true;
             }
             else if (Input.GetKeyDown(KeyCode.D) && _currentRaw != _rawsCount)
             {
                 _currentRaw += 1;
-                _currentDirection = Vector3.right;
+                _currentDirection = Vector3.left;
                 _movingSide = true;
             }
 
@@ -78,8 +79,8 @@ public class PlayerController : MonoBehaviour
 
             if (_movingSide)
             {
-                transform.Translate(transform.position +
-                                    _currentDirection * (_sideSpeed * _speedMultiplier * Time.deltaTime));
+                //lerp
+                transform.Translate(_currentDirection * (_sideSpeed * _speedMultiplier * Time.deltaTime));
                 _movingSide = !TryReachTarget();
             }
         }
@@ -101,16 +102,16 @@ public class PlayerController : MonoBehaviour
         }
         else if (_currentRaw == 2)
         {
-            if (transform.position.x >= _firstRawX + _spaceBetweenRaws - tolerance &&
-                transform.position.x <= _firstRawX + _spaceBetweenRaws + tolerance)
+            if (transform.position.x >= _firstRawX - _spaceBetweenRaws - tolerance &&
+                transform.position.x <= _firstRawX - _spaceBetweenRaws + tolerance)
             {
                 return true;
             }
         }
         else if (_currentRaw == 3)
         {
-            if (transform.position.x >= _firstRawX + _spaceBetweenRaws * 2 - tolerance &&
-                transform.position.x <= _firstRawX + _spaceBetweenRaws * 2 + tolerance)
+            if (transform.position.x >= _firstRawX - _spaceBetweenRaws * 2 - tolerance &&
+                transform.position.x <= _firstRawX - _spaceBetweenRaws * 2 + tolerance)
             {
                 return true;
             }

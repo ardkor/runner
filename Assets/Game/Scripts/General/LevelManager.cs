@@ -12,11 +12,12 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private Transform _levelParent;
     [SerializeField] private Transform _buildPoint;
 
-    private List<LevelPart> _currentParts;
+    [SerializeField] private float _levelSpeed = 0.2f;
+    
+    private List<GameObject> _currentParts;
     private System.Random _random;
-    private bool _levelMoving = true;
+    private bool _levelMoving;
     private int _prevIndex = 0;
-    private float _levelSpeed = 3;
     private float _speedMultiplier = 1;
 
     private void OnEnable()
@@ -46,16 +47,26 @@ public class LevelManager : MonoBehaviour
 
     public void BuildLevelPart()
     {
-        int levelIndex = _random.Next(0, _levelParts.Count + 1);
+        int levelIndex = _random.Next(0, _levelParts.Count);
         while (_prevIndex == levelIndex)
-            levelIndex = _random.Next(0, _levelParts.Count + 1);
-        _buildPoint.position += new Vector3(_levelParts[levelIndex].length, 0, 0);
-        GameObject levelPart = Instantiate(_levelParts[levelIndex].gameObject, _levelParent);
+            levelIndex = _random.Next(0, _levelParts.Count);
+        _buildPoint.position -= new Vector3(0, 0, _levelParts[levelIndex].length);
+        GameObject levelPart = Instantiate(_levelParts[levelIndex].LevelPartPrfab, _levelParent);
         levelPart.transform.position = _buildPoint.position;
-        _currentParts.Add(_levelParts[levelIndex]);
-        
+        _currentParts.Add(levelPart);
     }
 
+    public void PassPart()
+    {
+        RemovePart();
+        BuildLevelPart();
+    }
+    public void RemovePart()
+    {
+        GameObject part = _currentParts[0];
+        _currentParts.Remove(_currentParts[0]);
+        Destroy(part);
+    }
     private void EnableMoving()
     {
         _levelMoving = true;
@@ -68,6 +79,7 @@ public class LevelManager : MonoBehaviour
 
     private void StartLevelBuilding()
     {
+        _currentParts = new List<GameObject>();
         _random = new System.Random();
         for (int i = 0; i < 5; i++)
         {
@@ -78,10 +90,7 @@ public class LevelManager : MonoBehaviour
 
     private void MoveLevel()
     {
-        foreach (var part in _currentParts)
-        {
-            part.transform.Translate(part.transform.position + new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
-        }
-        _levelBack.transform.Translate(_levelBack.transform.position + new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
+        _levelParent.Translate(new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
+        _levelBack.transform.Translate(new Vector3(0, 0, -_levelSpeed * _speedMultiplier * Time.deltaTime));
     }
 }
