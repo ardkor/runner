@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
     {
         if (other.GetComponent<Coin>())
         {
-            if(_bonucesManager.DoubleCoinsEnabled)
+            if (_bonucesManager.DoubleCoinsEnabled)
                 _coinCounter.AddCoin();
             _coinCounter.AddCoin();
         }

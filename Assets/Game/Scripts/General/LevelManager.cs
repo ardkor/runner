@@ -81,16 +81,15 @@ public class LevelManager : MonoBehaviour
     {
         _currentParts = new List<GameObject>();
         _random = new System.Random();
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 8; i++)
         {
             BuildLevelPart();
         }
     }
-
-
+    
     private void MoveLevel()
     {
         _levelParent.Translate(new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
-        _levelBack.transform.Translate(new Vector3(0, 0, -_levelSpeed * _speedMultiplier * Time.deltaTime));
+        //_levelBack.transform.Translate(new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
     }
 }

@@ -10,8 +10,9 @@ public class Bonuce : MonoBehaviour
 
    public void GetBonuce()
    {
+      if(_bonuceTimer != null)
+         StopCoroutine(_bonuceTimer);
       enabled = true;
-      StopCoroutine(_bonuceTimer);
       _bonuceTimer = StartCoroutine(BonuceTime());
    }
    private IEnumerator BonuceTime()

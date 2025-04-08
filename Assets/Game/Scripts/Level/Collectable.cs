@@ -15,9 +15,10 @@ public class Collectable : MonoBehaviour
     {
         _size = transform.localScale;
     }
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
-        StartCoroutine(Disappearance());
+        if(other.GetComponent<Player>() != null)
+            StartCoroutine(Disappearance());
     }
 
 

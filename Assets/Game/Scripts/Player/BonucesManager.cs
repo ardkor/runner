@@ -8,7 +8,7 @@ public class BonucesManager : MonoBehaviour
     [SerializeField] private Bonuce _invincibility;
 
     public bool DoubleCoinsEnabled => _doubleCoins.enabled;
-    public bool InvincibilityEnabled => _doubleCoins.enabled;
+    public bool InvincibilityEnabled => _invincibility.enabled;
 
     public void GetDoubleCoinsBonuce()
     {
