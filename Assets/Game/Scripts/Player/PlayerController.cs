@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float _sideSpeed = 3;
     
-    private Animator _animator;
+    [SerializeField] private Animator _animator;
 
     private Vector3 _currentDirection;
 

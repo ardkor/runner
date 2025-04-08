@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Collectable : MonoBehaviour
 {
+    [SerializeField]
+    protected float rotationSpeedX, rotationSpeedY=0.5f, rotationSpeedZ;
+    
     private float _disappearanceDuration = 0.2f;
 
     private Vector3 _size;
@@ -17,6 +20,11 @@ public class Collectable : MonoBehaviour
         StartCoroutine(Disappearance());
     }
 
+
+    protected virtual void Update()
+    {
+        transform.Rotate(rotationSpeedX, rotationSpeedY, rotationSpeedZ);
+    }
     private IEnumerator Disappearance()
     {
         float timer = 0;
