@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour
             else
                 transform.position = new Vector3(transform.position.x, Mathf.Lerp(_targetHeight, posY, t * 2 - 1), 0);
             jumpTimer += Time.deltaTime;
-            yield return new WaitForSeconds(Time.deltaTime);
+            yield return null;
         }
 
         transform.position = new Vector3(transform.position.x, posY, 0);

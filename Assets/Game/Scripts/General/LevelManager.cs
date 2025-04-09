@@ -88,8 +88,8 @@ public class LevelManager : MonoBehaviour
         {
             while (_prevIndex == levelIndex)
                 levelIndex = _random.Next(0, _levelParts.Count);
+            _prevIndex = levelIndex;
         }
-
         LevelPart levelPart = _levelParts[levelIndex].GetComponent<LevelPart>();
         _buildPoint.position -= new Vector3(0, 0, levelPart.length);
         GameObject part = Instantiate(_levelParts[levelIndex], _levelPartsParent);

@@ -14,7 +14,6 @@ public class JsonSerializer
         string json = JsonUtility.ToJson(records);
         string filePath = Path.Combine(Application.persistentDataPath, fileName);
         File.WriteAllText(filePath, json);
-        Debug.Log("JSON сохранен в: " + filePath);
     }
 
     public List<Record> LoadJson()
@@ -26,7 +25,6 @@ public class JsonSerializer
             string json = File.ReadAllText(filePath);
             RecordsData recordsData = JsonUtility.FromJson<RecordsData>(json);
             records.AddRange(recordsData.records);
-            Debug.Log("JSON загружен из: " + filePath);
         }
         else
         {
