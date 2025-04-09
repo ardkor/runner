@@ -9,5 +9,23 @@ public class LevelPart : MonoBehaviour
 
     [SerializeField] private GameObject _levelPartPrfab;
 
-    public GameObject LevelPartPrfab => _levelPartPrfab;
+    //public GameObject LevelPartPrfab => _levelPartPrfab;
+    
+    public void StopAnimations()
+    {
+        Animator[] animators = GetComponentsInChildren<Animator>();
+        foreach (var animator in animators)
+        {
+            animator.enabled = false;
+        }
+    }
+
+    public void StopCollectables()
+    {
+        Collectable[] collectables = GetComponentsInChildren<Collectable>();
+        foreach (var collectable in collectables)
+        {
+            collectable.StopRotating();
+        }
+    }
 }

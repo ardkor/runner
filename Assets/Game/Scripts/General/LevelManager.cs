@@ -1,19 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private Player _player;
 
-    [SerializeField] private List<LevelPart> _levelParts;
-    [SerializeField] private GameObject _levelBack;
-    [SerializeField] private Transform _levelParent;
+    [SerializeField] private List<GameObject> _levelParts;
+    [SerializeField] private GameObject _emptyLevelPart;
+    [SerializeField] private Transform _level;
+    [SerializeField] private Transform _levelPartsParent;
     [SerializeField] private Transform _buildPoint;
+    private Vector3 _buildPosition;
 
     [SerializeField] private float _levelSpeed = 0.2f;
-    
+
     private List<GameObject> _currentParts;
     private System.Random _random;
     private bool _levelMoving;
@@ -22,22 +26,41 @@ public class LevelManager : MonoBehaviour
 
     private void OnEnable()
     {
+        _gameManager.gameStarted += DestroyPrevLevel;
         _gameManager.gameStarted += StartLevelBuilding;
         _gameManager.gameStarted += EnableMoving;
         _player.died += DisableMoving;
+        _player.died += StopAnimations;
+        _player.died += ResetBuildPoint;
     }
 
     private void OnDisable()
     {
+        _gameManager.gameStarted -= DestroyPrevLevel;
         _gameManager.gameStarted -= StartLevelBuilding;
         _gameManager.gameStarted -= EnableMoving;
         _player.died -= DisableMoving;
+        _player.died -= StopAnimations;
+        _player.died -= ResetBuildPoint;
     }
 
+    private void StopAnimations()
+    {
+        foreach (var part in _currentParts)
+        {
+            part.GetComponent<LevelPart>().StopAnimations();
+            part.GetComponent<LevelPart>().StopCollectables();
+        }
+    }
     private void Update()
     {
         if (_levelMoving)
             MoveLevel();
+    }
+
+    private void Start()
+    {
+        _buildPosition = _buildPoint.position;
     }
 
     public void UpdateSpeed(float speed)
@@ -45,15 +68,41 @@ public class LevelManager : MonoBehaviour
         _speedMultiplier = speed;
     }
 
+    private void ResetBuildPoint()
+    {
+        _buildPoint.position = _buildPosition;
+    }
+    private void DestroyPrevLevel()
+    {
+        int partsCount = _levelPartsParent.transform.childCount;
+        for (int i = 0; i < partsCount; i++)
+        {
+            Transform part = _levelPartsParent.transform.GetChild(i);
+            Destroy(part.gameObject);
+        }
+    }
     public void BuildLevelPart()
     {
         int levelIndex = _random.Next(0, _levelParts.Count);
-        while (_prevIndex == levelIndex)
-            levelIndex = _random.Next(0, _levelParts.Count);
-        _buildPoint.position -= new Vector3(0, 0, _levelParts[levelIndex].length);
-        GameObject levelPart = Instantiate(_levelParts[levelIndex].LevelPartPrfab, _levelParent);
-        levelPart.transform.position = _buildPoint.position;
-        _currentParts.Add(levelPart);
+        if (_levelParts.Count > 1)
+        {
+            while (_prevIndex == levelIndex)
+                levelIndex = _random.Next(0, _levelParts.Count);
+        }
+
+        LevelPart levelPart = _levelParts[levelIndex].GetComponent<LevelPart>();
+        _buildPoint.position -= new Vector3(0, 0, levelPart.length);
+        GameObject part = Instantiate(_levelParts[levelIndex], _levelPartsParent);
+        part.transform.position = _buildPoint.position;
+        _currentParts.Add(part);
+    }
+    public void BuildEmptyLevelPart()
+    {
+        LevelPart levelPart = _emptyLevelPart.GetComponent<LevelPart>();
+        _buildPoint.position -= new Vector3(0, 0, levelPart.length);
+        GameObject part = Instantiate(_emptyLevelPart, _levelPartsParent);
+        part.transform.position = _buildPoint.position;
+        _currentParts.Add(part);
     }
 
     public void PassPart()
@@ -61,12 +110,14 @@ public class LevelManager : MonoBehaviour
         RemovePart();
         BuildLevelPart();
     }
+
     public void RemovePart()
     {
         GameObject part = _currentParts[0];
         _currentParts.Remove(_currentParts[0]);
         Destroy(part);
     }
+
     private void EnableMoving()
     {
         _levelMoving = true;
@@ -81,15 +132,15 @@ public class LevelManager : MonoBehaviour
     {
         _currentParts = new List<GameObject>();
         _random = new System.Random();
-        for (int i = 0; i < 8; i++)
+        BuildEmptyLevelPart();
+        for (int i = 0; i < 7; i++)
         {
             BuildLevelPart();
         }
     }
-    
+
     private void MoveLevel()
     {
-        _levelParent.Translate(new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
-        //_levelBack.transform.Translate(new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
+        _level.Translate(new Vector3(0, 0, _levelSpeed * _speedMultiplier * Time.deltaTime));
     }
 }

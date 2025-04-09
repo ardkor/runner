@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public event Action gameStarted;
 
+    [SerializeField] private EndGameMenu _endGameMenu;
     [SerializeField] private LevelManager _levelManager;
     [SerializeField] private Player _player;
     [SerializeField] private PlayerController _playerController;
@@ -21,18 +22,22 @@ public class GameManager : MonoBehaviour
     {
         _player.died += StopAccelerating;
         _player.died += StopMusic;
+        _player.died += OpenEndMenu;
     }
 
     private void OnDisable()
     {
         _player.died -= StopAccelerating;
         _player.died -= StopMusic;
+        _player.died -= OpenEndMenu;
     }
     
     public void StartGame()
     {
         SoundManager.Instance.StartMusic(SoundManager.actionMusic);
+        SoundInstance.musicVolume = 0.4f;
         gameStarted?.Invoke();
+        _player.ComeToLfe();
         _speedUpCoroutine = StartCoroutine(SpeedUpTimer());
     }
 
@@ -48,6 +53,11 @@ public class GameManager : MonoBehaviour
     private void StopAccelerating()
     {
         StopCoroutine(_speedUpCoroutine);
+    }
+
+    private void OpenEndMenu()
+    {
+        _endGameMenu.Activate();
     }
 
     private IEnumerator SpeedUpTimer()

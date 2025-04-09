@@ -15,8 +15,8 @@ public class MainMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        _startButton.onClick.AddListener(_gameManager.StartGame);
         _startButton.onClick.AddListener(_coinCounter.Open);
+        _startButton.onClick.AddListener(_gameManager.StartGame);
         _startButton.onClick.AddListener(Close);
         _exitButton.onClick.AddListener(_gameManager.Exit);
         _recordsTableButton.onClick.AddListener(_scoreTable.Open);
@@ -25,8 +25,8 @@ public class MainMenu : MonoBehaviour
 
     private void OnDisable()
     {
-        _startButton.onClick.RemoveListener(_gameManager.StartGame);
         _startButton.onClick.RemoveListener(_coinCounter.Open);
+        _startButton.onClick.RemoveListener(_gameManager.StartGame);
         _startButton.onClick.RemoveListener(Close);
         _exitButton.onClick.RemoveListener(_gameManager.Exit);
         _recordsTableButton.onClick.RemoveListener(_scoreTable.Open);

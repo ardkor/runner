@@ -2,14 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RecordTable : MonoBehaviour
 {
     [SerializeField] private GameObject _content;
     [SerializeField] private GameObject _recordPrefab;
+
+    private RectTransform _rectTransform;
+    private GridLayoutGroup _gridLayoutGroup;
     public void Open()
     {
+        ClearTable();
         LoadRecords();
+        UpdateHeight();
         gameObject.SetActive(true);
     }
     public void Close()
@@ -17,6 +23,15 @@ public class RecordTable : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void ClearTable()
+    {
+        int records = _content.transform.childCount;
+        for (int i = 0; i < records; i++)
+        {
+            Transform record = _content.transform.GetChild(i);
+            Destroy(record.gameObject);
+        }
+    }
     private void LoadRecords()
     {
         JsonSerializer jsonSerializer = new JsonSerializer();
@@ -28,6 +43,16 @@ public class RecordTable : MonoBehaviour
             GameObject scoreRecord = Instantiate(_recordPrefab, _content.transform);
             scoreRecord.GetComponent<TMP_Text>().text = record.score.ToString();
         }
+    }
+
+    private void UpdateHeight()
+    {
+        _rectTransform = _content.GetComponent<RectTransform>();
+        _gridLayoutGroup = _content.GetComponent<GridLayoutGroup>();
+        int records = _content.transform.childCount;
+        float linesCount = records % 2 == 0 ? records / 2f : records / 2f + 1;
+        _rectTransform.sizeDelta = new Vector2(_rectTransform.sizeDelta.x, linesCount * _gridLayoutGroup.cellSize.y);
+        //_rectTransform.rect.height = _gridLayoutGroup.cellSize.y;
     }
     
 }

@@ -13,37 +13,52 @@ public class Player : MonoBehaviour
     [SerializeField] private LevelManager _levelManager;
     [SerializeField] private CoinCounter _coinCounter;
 
+    private bool isDead;
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Coin>())
+        if (!isDead)
         {
-            if (_bonucesManager.DoubleCoinsEnabled)
+            if (other.GetComponent<Coin>())
+            {
+                if (_bonucesManager.DoubleCoinsEnabled)
+                    _coinCounter.AddCoin();
                 _coinCounter.AddCoin();
-            _coinCounter.AddCoin();
-        }
-        else if (other.GetComponent<Obstacle>())
-        {
-            if(!_bonucesManager.InvincibilityEnabled)
-                Die();
-        }
-        else if (other.GetComponent<DoubleCoins>())
-        {
-            _bonucesManager.GetDoubleCoinsBonuce();
-        }
-        else if (other.GetComponent<Invincibility>())
-        {
-            _bonucesManager.GetInvincibilityBonuce();
-        }
-        else if (other.GetComponent<LevelPartTrigger>())
-        {
-            _levelManager.PassPart();
+            }
+            else if (other.GetComponent<Obstacle>())
+            {
+                if (!_bonucesManager.InvincibilityEnabled)
+                    Die();
+            }
+            else if (other.GetComponent<DoubleCoins>())
+            {
+                _bonucesManager.GetDoubleCoinsBonuce();
+            }
+            else if (other.GetComponent<Invincibility>())
+            {
+                _bonucesManager.GetInvincibilityBonuce();
+            }
+            else if (other.GetComponent<LevelPartTrigger>())
+            {
+                _levelManager.PassPart();
+            }
         }
     }
-    
+
+    public void ComeToLfe()
+    {
+        StartCoroutine(ComingToLife());
+    }
+
+    private IEnumerator ComingToLife()
+    {
+        yield return new WaitForSeconds(1);
+        isDead = false;
+    }
 
     private void Die()
     {
+        isDead = true;
         died?.Invoke();
     }
 }

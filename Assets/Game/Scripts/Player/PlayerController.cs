@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,25 +14,29 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Player _player;
     [SerializeField] private float _firstRawX;
     [SerializeField] private float _spaceBetweenRaws;
-    //[SerializeField] private float _jumpTime = 1.3f;
 
     [SerializeField] private float _sideSpeed = 3;
-    
+
     [SerializeField] private Animator _animator;
 
-    private Vector3 _currentDirection;
+    private Vector3 _position;
     private float _movePosition;
     private float _targetPosition;
 
     private float _speedMultiplier = 1;
 
     private int _rawsCount = 3;
+
     private int _currentRaw = 2;
-    //private float tolerance = 0.3f;
-    private float _movingTimer;
+
+    //private float _jumpTimer;
+    private float _jumpTime = 1.5f;
+    private float _targetHeight = 3f;
+
+    private float _sideMovingTimer;
 
     private bool _jumping;
-    private bool _movingSide;
+    private bool _sidMoving;
     private bool _active;
 
     public void UpdateSpeed(float speed)
@@ -42,6 +47,7 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         _gameManager.gameStarted += Enable;
+        _gameManager.gameStarted += ResetAnimator;
         _gameManager.gameStarted += MoveToStart;
         _player.died += Disable;
     }
@@ -49,101 +55,99 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         _gameManager.gameStarted -= Enable;
+        _gameManager.gameStarted -= ResetAnimator;
         _gameManager.gameStarted -= MoveToStart;
         _player.died -= Disable;
     }
 
+    private void Start()
+    {
+        _position = transform.position;
+    }
+
     private void Enable()
     {
+        _animator.enabled = true;
         _active = true;
     }
 
     private void Disable()
     {
-        _active = true;
+        _animator.enabled = false;
+        _active = false;
+    }
+
+    private void ResetAnimator()
+    {
+        _animator.Play("run");
     }
 
     private void MoveToStart()
     {
-        _targetPosition = _firstRawX - _spaceBetweenRaws * (_currentRaw - 1);
+        transform.position = new Vector3(_firstRawX - _spaceBetweenRaws * (_rawsCount - 2), _position.y, _position.z);
     }
+
     private void Update()
     {
         if (_active)
         {
             if (Input.GetKeyDown(KeyCode.A) && _currentRaw != 1)
             {
-                //_currentDirection = Vector3.right;
-                _movingSide = true;
                 _movePosition = transform.position.x;
                 _targetPosition = _firstRawX - _spaceBetweenRaws * (_currentRaw - 2);
                 _currentRaw -= 1;
-                _movingTimer = 0;
+                _sideMovingTimer = 0;
+                _sidMoving = true;
             }
             else if (Input.GetKeyDown(KeyCode.D) && _currentRaw != _rawsCount)
             {
-                //_currentDirection = Vector3.left;
-                //_movingSide = true;
                 _movePosition = transform.position.x;
                 _targetPosition = _firstRawX - _spaceBetweenRaws * _currentRaw;
                 _currentRaw += 1;
-                _movingTimer = 0;
+                _sideMovingTimer = 0;
+                _sidMoving = true;
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && !_jumping)
             {
-                //if(!_jumping)
                 Jump();
             }
-            
-                _movingTimer += Time.deltaTime;
-                float t = _movingTimer / (1 / _sideSpeed * _speedMultiplier); //_movePosition / _targetPosition 
-                transform.position = new Vector3(Mathf.Lerp(_movePosition, _targetPosition, t), 0, 0);
 
-                //transform.Translate(_currentDirection * (_sideSpeed * _speedMultiplier * Time.deltaTime));
+            if (_sidMoving)
+            {
+                _sideMovingTimer += Time.deltaTime;
+                float t = _sideMovingTimer / (1 / _sideSpeed * _speedMultiplier);
+                transform.position =
+                    new Vector3(Mathf.Lerp(_movePosition, _targetPosition, t), transform.position.y, 0);
+                if (t >= 1)
+                    _sidMoving = false;
+            }
         }
     }
 
     private void Jump()
     {
-        //_jumping = true;
         _animator.SetTrigger(JumpKey);
-        //StartCoroutine(JumpAnimation());
+        StartCoroutine(JumpTime());
     }
 
-    /*private IEnumerator JumpAnimation()
+    private IEnumerator JumpTime()
     {
-        yield return new WaitForSeconds(_jumpTime);
-        _animator.SetTrigger(JumpEndKey);
+        _jumping = true;
+        float posY = transform.position.y;
+        float jumpTimer = 0;
+        while (jumpTimer < _jumpTime / _speedMultiplier)
+        {
+            float t = jumpTimer / _jumpTime * _speedMultiplier;
+            if (jumpTimer < _jumpTime / _speedMultiplier / 2)
+                transform.position = new Vector3(transform.position.x, Mathf.Lerp(posY, _targetHeight, t * 2), 0);
+            else
+                transform.position = new Vector3(transform.position.x, Mathf.Lerp(_targetHeight, posY, t * 2 - 1), 0);
+            jumpTimer += Time.deltaTime;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+
+        transform.position = new Vector3(transform.position.x, posY, 0);
         _jumping = false;
-    }*/
-
-    /*private bool TryReachTarget()
-    {
-        if (_currentRaw == 1)
-        {
-            if (transform.position.x >= _firstRawX - tolerance && transform.position.x <= _firstRawX + tolerance)
-            {
-                return true;
-            }
-        }
-        else if (_currentRaw == 2)
-        {
-            if (transform.position.x >= _firstRawX - _spaceBetweenRaws - tolerance &&
-                transform.position.x <= _firstRawX - _spaceBetweenRaws + tolerance)
-            {
-                return true;
-            }
-        }
-        else if (_currentRaw == 3)
-        {
-            if (transform.position.x >= _firstRawX - _spaceBetweenRaws * 2 - tolerance &&
-                transform.position.x <= _firstRawX - _spaceBetweenRaws * 2 + tolerance)
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }*/
+    }
 }

@@ -22,20 +22,26 @@ public class EndGameMenu : MonoBehaviour
     private void OnEnable()
     {
         _saveScoreButton.onClick.AddListener(SaveScore);
+        _saveScoreButton.onClick.AddListener(Close);
         _closeButton.onClick.AddListener(Close);
-        _player.died += SetScore;
     }
 
     private void OnDisable()
     {
         _saveScoreButton.onClick.RemoveListener(SaveScore);
+        _saveScoreButton.onClick.RemoveListener(Close);
         _closeButton.onClick.RemoveListener(Close);
-        _player.died -= SetScore;
     }
 
     private void SetScore()
     {
         _score.text = _coinCounter.Coins.ToString();
+    }
+
+    public void Activate()
+    {
+        gameObject.SetActive(true);
+        SetScore();
     }
 
     private void SaveScore()

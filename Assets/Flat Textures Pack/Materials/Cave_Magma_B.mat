@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Cave_Magma_B
   m_Shader: {fileID: 10703, guid: 0000000000000000f000000000000000, type: 0}
-  m_Parent: {fileID: 2100000, guid: 520938bf13624b04fb159c3db7351aca, type: 2}
+  m_Parent: {fileID: 2100000, guid: b4ce1486c4e3c83408feacc4d7497b0c, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []

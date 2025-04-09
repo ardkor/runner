@@ -11,6 +11,10 @@ public class Collectable : MonoBehaviour
 
     private Vector3 _size;
 
+    public void StopRotating()
+    {
+        rotationSpeedY = 0f;
+    }
     private void Start()
     {
         _size = transform.localScale;
