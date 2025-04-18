@@ -38,6 +38,8 @@ public class GameManager : MonoBehaviour
         SoundInstance.musicVolume = 0.4f;
         gameStarted?.Invoke();
         _player.ComeToLfe();
+        _gameSpeed = 1;
+        ChangeGameSpeed();
         _speedUpCoroutine = StartCoroutine(SpeedUpTimer());
     }
 
@@ -66,11 +68,11 @@ public class GameManager : MonoBehaviour
         {
             yield return new WaitForSeconds(_speedChangeTime);
             _gameSpeed += _speedChange;
-            AddGameSpeed();
+            ChangeGameSpeed();
         }
     }
 
-    private void AddGameSpeed()
+    private void ChangeGameSpeed()
     {
         _levelManager.UpdateSpeed(_gameSpeed);
         _playerController.UpdateSpeed(_gameSpeed);

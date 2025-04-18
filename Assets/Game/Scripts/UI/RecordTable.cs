@@ -13,13 +13,13 @@ public class RecordTable : MonoBehaviour
     private GridLayoutGroup _gridLayoutGroup;
     public void Open()
     {
-        ClearTable();
         LoadRecords();
         UpdateHeight();
         gameObject.SetActive(true);
     }
     public void Close()
     {
+        ClearTable();
         gameObject.SetActive(false);
     }
 
@@ -36,6 +36,7 @@ public class RecordTable : MonoBehaviour
     {
         JsonSerializer jsonSerializer = new JsonSerializer();
         List<Record> records = jsonSerializer.LoadJson();
+        records.Sort((r1, r2) => r2.score.CompareTo(r1.score));
         foreach (var record in records)
         {
             GameObject nameRecord = Instantiate(_recordPrefab, _content.transform);
@@ -52,7 +53,5 @@ public class RecordTable : MonoBehaviour
         int records = _content.transform.childCount;
         float linesCount = records % 2 == 0 ? records / 2f : records / 2f + 1;
         _rectTransform.sizeDelta = new Vector2(_rectTransform.sizeDelta.x, linesCount * _gridLayoutGroup.cellSize.y);
-        //_rectTransform.rect.height = _gridLayoutGroup.cellSize.y;
     }
-    
 }
